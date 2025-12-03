@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>معالج إشارة الصوت - Professional</title>
+    <title>Audio Signal Processor - Professional</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Tailwind CSS for modern styling -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,7 +14,8 @@
                         sans: ['Inter', 'sans-serif'],
                     },
                     colors: {
-                        'primary': '#06b6d4', // Sky Blue 500
+                        // الألوان الرئيسية المشرقة تبقى كما هي لتكون واضحة على الخلفية الداكنة
+                        'primary': '#06b6d4', // Cyan 500
                         'secondary': '#f97316', // Orange 500
                     }
                 }
@@ -25,20 +26,20 @@
     <script src="https://unpkg.com/tone@next/build/Tone.js"></script>
 
     <style>
-        /* Custom styles for ranges and canvas */
+        /* Custom styles for ranges and canvas (Dark Theme Base) */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
-            color: #1f2937;
+            background-color: #121212; /* خلفية داكنة جداً */
+            color: #f3f4f6; /* لون نص فاتح افتراضي */
         }
         .container {
             max-width: 1000px;
             margin: 0 auto;
         }
         canvas {
-            background-color: #1f2937;
+            background-color: #212121; /* خلفية الـ Waveform داكنة */
             border-radius: 0.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
         }
         /* Custom styles for range input */
         input[type=range]::-webkit-slider-thumb {
@@ -51,28 +52,48 @@
             cursor: pointer;
             box-shadow: 0 0 5px rgba(0,0,0,0.3);
         }
+
+        /* ** NEW: Glow effect for the footer text ** */
+        .text-glow {
+            text-shadow: 0 0 8px rgba(6, 182, 212, 0.8), 
+                         0 0 15px rgba(6, 182, 212, 0.4);
+            transition: all 0.3s ease;
+        }
+        .text-glow:hover {
+             text-shadow: 0 0 10px rgba(6, 182, 212, 1), 
+                          0 0 20px rgba(6, 182, 212, 0.6);
+        }
     </style>
 </head>
 <body class="p-4 md:p-8">
-    <header class="text-center mb-8 bg-white p-6 rounded-xl shadow-lg">
-        <h1 class="text-3xl font-extrabold text-primary">معالج إشارة الصوت</h1>
-        <p class="text-gray-600 mt-2 text-sm md:text-base">
-          
- مرحبا بكم في منصاتنا معكم المهندس مصطفي البرعي 
+    <!-- تم تعديل الخلفية إلى bg-gray-800 والنص إلى text-gray-300 -->
+    <header class="text-center mb-8 bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700">
+        <h1 class="text-3xl font-extrabold text-primary">Audio Signal Processor</h1>
+        <p class="text-gray-400 mt-2 text-sm md:text-base flex flex-wrap justify-center gap-x-4 gap-y-1">
+            <span>رفع ملف صوتي</span>
+            <span class="text-primary">•</span>
+            <span>تعديل النغمة (Pitch) بشكل منفصل</span>
+            <span class="text-primary">•</span>
+            <span>تغيير السرعة (Time Stretch)</span>
+            <span class="text-primary">•</span>
+            <span>فلتر ترددات (Low/High Pass)</span>
+            <span class="text-primary">•</span>
+            <span>عرض شكل الموجة (Waveform)</span>
         </p>
     </header>
 
     <main class="container space-y-8">
         
         <!-- File Input and Controls -->
-        <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-            <input id="file" type="file" accept="audio/*" class="w-full text-gray-700 mb-6 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-cyan-600"/>
+        <!-- تم تعديل الخلفية إلى bg-gray-800 والنص إلى text-gray-300 -->
+        <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700">
+            <input id="file" type="file" accept="audio/*" class="w-full text-gray-300 mb-6 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-cyan-600"/>
             
             <div id="controls-panel" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Filter Type -->
                 <div class="control flex flex-col space-y-2">
-                    <label for="filterType" class="text-sm font-medium text-gray-700">Filter</label>
-                    <select id="filterType" class="p-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+                    <label for="filterType" class="text-sm font-medium text-gray-300">Filter</label>
+                    <select id="filterType" class="p-2 border border-gray-700 bg-gray-700 text-white rounded-lg focus:ring-primary focus:border-primary">
                         <option value="none">None</option>
                         <option value="lowpass">Low-pass</option>
                         <option value="highpass">High-pass</option>
@@ -81,29 +102,29 @@
 
                 <!-- Cutoff Frequency -->
                 <div class="control flex flex-col space-y-2">
-                    <label for="cutoff" class="text-sm font-medium text-gray-700 flex justify-between">
+                    <label for="cutoff" class="text-sm font-medium text-gray-300 flex justify-between">
                         Cutoff (Hz)
                         <span id="cutoffVal" class="font-bold text-primary">3000</span>
                     </label>
-                    <input id="cutoff" type="range" min="100" max="12000" value="3000" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    <input id="cutoff" type="range" min="100" max="12000" value="3000" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
                 </div>
 
                 <!-- Speed (Time Stretch) -->
                 <div class="control flex flex-col space-y-2">
-                    <label for="speed" class="text-sm font-medium text-gray-700 flex justify-between">
+                    <label for="speed" class="text-sm font-medium text-gray-300 flex justify-between">
                         Speed (time stretch)
                         <span id="speedVal" class="font-bold text-primary">1.00</span>
                     </label>
-                    <input id="speed" type="range" min="0.5" max="2" step="0.01" value="1" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    <input id="speed" type="range" min="0.5" max="2" step="0.01" value="1" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
                 </div>
 
                 <!-- Pitch Shift (Semitones) -->
                 <div class="control flex flex-col space-y-2">
-                    <label for="pitch" class="text-sm font-medium text-gray-700 flex justify-between">
+                    <label for="pitch" class="text-sm font-medium text-gray-300 flex justify-between">
                         Pitch (semitones)
                         <span id="pitchVal" class="font-bold text-primary">0</span>
                     </label>
-                    <input id="pitch" type="range" min="-12" max="12" step="1" value="0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    <input id="pitch" type="range" min="-12" max="12" step="1" value="0" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
                 </div>
             </div>
         </div>
@@ -117,15 +138,18 @@
                 ■ ايقاف
             </button>
             <button id="export" class="btn bg-gray-600 text-white py-3 px-8 rounded-full font-semibold shadow-lg hover:bg-gray-700 transition duration-150 disabled:bg-gray-400" disabled>
-                ⬇️ لتحميل المقطع الصوتي
+                ⬇️ لتحميل الصوت
             </button>
         </div>
         
         <!-- Waveform Canvas -->
         <canvas id="wave" width="800" height="150" class="w-full max-w-full"></canvas>
 
-        <footer class="text-center pt-4 text-gray-500">
-            <small>By ENG/Mostafa Elboray.</small>
+        <footer class="text-center pt-4 text-gray-400">
+            <!-- تم تعديل هذا الجزء لإضافة تأثير الإضاءة واللون الأساسي -->
+            <small class="text-primary font-extrabold text-lg text-glow hover:text-cyan-400 transition-colors duration-300">
+                By Mostafa Elboray
+            </small>
         </footer>
     </main>
 
@@ -232,17 +256,18 @@
                 if(filter) filter.dispose();
                 if(analyser) analyser.dispose();
 
-                // 4. Create new Player with the decoded buffer
+                // 4. Create new Player instance
                 player = new Tone.Player({
-                    url: audioBuf,
                     autostart: false,
                     loop: true, // Use loop for continuous playback during adjustments
                 });
+                // 5. Assign the decoded buffer to the player's buffer property
+                player.buffer = new Tone.ToneAudioBuffer(audioBuf);
                 
-                // 5. Setup audio graph and connect nodes
+                // 6. Setup audio graph and connect nodes
                 setupNodes();
                 
-                // 6. Final setup
+                // 7. Final setup
                 setControlState(false);
                 console.log('File loaded, duration:', fileBuffer.duration);
                 // Draw initial waveform
@@ -250,7 +275,13 @@
 
             } catch (error) {
                 console.error("Error loading or decoding audio:", error);
-                alert("Failed to load audio file: " + error.message);
+                // استخدام رسالة مخصصة بدلاً من alert()
+                const message = document.createElement('div');
+                message.className = 'fixed top-4 right-4 bg-red-600 text-white p-4 rounded-lg shadow-xl z-50';
+                message.textContent = "فشل تحميل الملف الصوتي: " + error.message;
+                document.body.appendChild(message);
+                setTimeout(() => message.remove(), 5000);
+                
                 setControlState(true);
             }
         });
@@ -297,7 +328,7 @@
             const amp = height / 2;
             
             ctx.clearRect(0, 0, width, height); // Clear screen
-            ctx.fillStyle = '#1f2937';
+            ctx.fillStyle = '#212121'; // خلفية Waveform داكنة
             ctx.fillRect(0, 0, width, height);
 
             ctx.beginPath();
@@ -334,7 +365,7 @@
             if(analyser && isPlaying){
                 // Draw real-time waveform from analyser
                 const waveform = analyser.getValue();
-                ctx.fillStyle = '#1f2937';
+                ctx.fillStyle = '#212121'; // خلفية Waveform داكنة
                 ctx.fillRect(0,0,canvas.width,canvas.height);
                 ctx.lineWidth = 2;
                 ctx.strokeStyle = '#06b6d4';
@@ -361,7 +392,7 @@
                 drawWaveformStatic(fileBuffer);
             } else {
                 // Clear canvas if no file is loaded
-                ctx.fillStyle = '#1f2937';
+                ctx.fillStyle = '#212121'; // خلفية Waveform داكنة
                 ctx.fillRect(0,0,canvas.width,canvas.height);
                 ctx.fillStyle = '#9ca3af';
                 ctx.font = '20px Inter';
@@ -374,7 +405,15 @@
         // --- Play & Stop Logic ---
         
         playBtn.addEventListener('click', async ()=>{
-            if(!player || !fileBuffer) { alert('Upload audio file first'); return; }
+            if(!player || !fileBuffer) { 
+                // استخدام رسالة مخصصة بدلاً من alert()
+                const message = document.createElement('div');
+                message.className = 'fixed top-4 right-4 bg-yellow-600 text-white p-4 rounded-lg shadow-xl z-50';
+                message.textContent = "يرجى رفع ملف صوتي أولاً.";
+                document.body.appendChild(message);
+                setTimeout(() => message.remove(), 3000);
+                return; 
+            }
             
             // Resume context if suspended (needed for first user interaction)
             if(!Tone.context.state || Tone.context.state === 'suspended') {
@@ -409,7 +448,15 @@
         // --- Export Logic (Offline Rendering) ---
         
         exportBtn.addEventListener('click', async ()=>{
-            if(!fileBuffer){ alert('Upload audio file first'); return; }
+            if(!fileBuffer){ 
+                // استخدام رسالة مخصصة بدلاً من alert()
+                const message = document.createElement('div');
+                message.className = 'fixed top-4 right-4 bg-yellow-600 text-white p-4 rounded-lg shadow-xl z-50';
+                message.textContent = "يرجى رفع ملف صوتي أولاً.";
+                document.body.appendChild(message);
+                setTimeout(() => message.remove(), 3000);
+                return;
+            }
             if(isPlaying) { player.stop(); isPlaying = false; }
             
             exportBtn.disabled = true;
@@ -427,7 +474,8 @@
 
                 // Render the entire Tone graph offline
                 const renderedBuffer = await Tone.Offline(({ transport }) => {
-                    const offlinePlayer = new Tone.Player(fileBuffer).toDestination();
+                    // يجب إنشاء Tone.Player جديد في سياق الـ Offline
+                    const offlinePlayer = new Tone.Player(fileBuffer);
                     
                     const offlinePitchShift = new Tone.PitchShift(currentPitch);
                     const offlineFilter = new Tone.Filter({
@@ -470,11 +518,21 @@
                 window.URL.revokeObjectURL(url);
                 a.remove();
                 
-                alert('Audio exported successfully!');
+                // استخدام رسالة مخصصة بدلاً من alert()
+                const message = document.createElement('div');
+                message.className = 'fixed top-4 right-4 bg-green-600 text-white p-4 rounded-lg shadow-xl z-50';
+                message.textContent = "تم تصدير الصوت بنجاح!";
+                document.body.appendChild(message);
+                setTimeout(() => message.remove(), 3000);
                 
             } catch (e) {
                 console.error("Export Error:", e);
-                alert("An error occurred during export. See console for details.");
+                // استخدام رسالة مخصصة بدلاً من alert()
+                const message = document.createElement('div');
+                message.className = 'fixed top-4 right-4 bg-red-600 text-white p-4 rounded-lg shadow-xl z-50';
+                message.textContent = "حدث خطأ أثناء التصدير. انظر وحدة التحكم (Console) للحصول على التفاصيل.";
+                document.body.appendChild(message);
+                setTimeout(() => message.remove(), 5000);
             } finally {
                 exportBtn.disabled = false;
                 exportBtn.textContent = '⬇️ Export Processed (WAV)';
