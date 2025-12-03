@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Audio Signal Processor - Professional</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <link rel="stylesheet" href="style.css">
+  <!-- Tone.js for audio processing (pitch shift, player) -->
+  <script src="https://unpkg.com/tone@next/build/Tone.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Audio Signal Processor</h1>
+    <p>رفع ملف — تعديل الـ Pitch بشكل منفصل — تغيير السرعة — فلتر Low/High — waveform — جاهز للنشر على Vercel</p>
+  </header>
+
+  <main class="container">
+    <div class="row">
+      <input id="file" type="file" accept="audio/*" />
+      <div class="control">
+        <label>Filter</label>
+        <select id="filterType">
+          <option value="none">None</option>
+          <option value="lowpass">Low-pass</option>
+          <option value="highpass">High-pass</option>
+        </select>
+      </div>
+
+      <div class="control">
+        <label>Cutoff (Hz)</label>
+        <input id="cutoff" type="range" min="100" max="12000" value="3000">
+        <span id="cutoffVal">3000</span>
+      </div>
+
+      <div class="control">
+        <label>Speed (time stretch)</label>
+        <input id="speed" type="range" min="0.5" max="2" step="0.01" value="1">
+        <span id="speedVal">1.00</span>
+      </div>
+
+      <div class="control">
+        <label>Pitch (semitones)</label>
+        <input id="pitch" type="range" min="-12" max="12" step="1" value="0">
+        <span id="pitchVal">0</span>
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button id="play" class="btn">▶ Play</button>
+      <button id="stop" class="btn">■ Stop</button>
+      <button id="export" class="btn">⬇️ Export Processed (WAV)</button>
+    </div>
+
+    <canvas id="wave" width="800" height="150"></canvas>
+
+    <footer>
+      <small>Built with Tone.js — deploy on Vercel by pushing this repo to GitHub and connecting to Vercel.</small>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
